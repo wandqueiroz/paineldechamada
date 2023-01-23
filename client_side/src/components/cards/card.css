@@ -1,0 +1,29 @@
+.card--container {
+    width: 50%;
+    min-height: 30vh;
+    max-height: 30vh;
+    border: 2px solid black;
+    border-radius: 5px;
+    margin: 0 5px 0 5px;
+    color: aliceblue;
+    
+}
+
+.card--titulo{
+    background-color: rgb(46, 46, 46);
+   
+}
+
+.div--card--nome h3{
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+.card--nome{
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; overflow: hidden;
+}
+
+.div--card--tipo h3{
+    min-height: 50%;
+    font-weight: bold;
+}
