@@ -235,7 +235,7 @@ function App() {
           ref={ref}
           onEnded={() => verificaVidNum() }
         />
-        {console.log(vidIndex)}
+        {/*console.log(vidIndex)*/}
       </Col>
       <Col md={6}>
         <div className="logo--container container" >
