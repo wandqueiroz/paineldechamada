@@ -1,32 +1,36 @@
 const express = require('express');
-const app = express();
-const mysql = require('mysql');
 const cors = require('cors');
 
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
-const db = mysql.createPool({
-    host: '127.0.0.1',
-    user: "root",
-    password: "",
-    database: "sgaservicedb",
-});
+const {eAdminAuth} = require('./middlewares/auth');
+require('dotenv').config();
 
-app.use(cors());
+const { Op, where } = require('sequelize');
+
+const app = express();
+
+const BeneficiariosPop = require('./models/BeneficiariosPop');
+const AtividadePop = require('./models/AtividadePop');
+const AtividadeCras = require('./models/AtividadeCras');
+const AtividadeCreas = require('./models/AtividadeCreas');
+const User = require('./models/User');
+const { decode } = require('punycode');
+
 app.use(express.json());
 
-app.post("/register",(req, res) => {
-    const {name} = req.body;
-    const {cost} = req.body;
-    const {category} = req.body;
-    let sql = "INSERT INTO games (name, cost, category) VALUES (?,?,?)";
-    
-    db.query(sql,[name, cost, category], (err, result) => {
-        console.log(err);
-    });
-   
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
+    res.header("Access-Control-Allow-Headers", "X-PINGOTHER, Content-Type, Authorization")
+    app.use(cors());
+    next();
 });
 
-app.get("/getNow", (req, res) => {
+
+
+/* app.get("/getNow", (req, res) => {
 
     let sql = "SELECT id, nome, horario, prioridade, perfil_atendimento FROM chamadas_temp order by id desc limit 2";
     db.query(sql, (err, result)=>{
@@ -51,7 +55,7 @@ app.get("/getTec", (req, res) => {
         if(err) console.log(err)
         else res.send(result);
     })
-});
+}); */
 
 /* app.get("/", (req, res) => {
     let sql = "INSERT INTO games (name, cost, category) VALUES ('Far Cry 5', '120', 'Ação')";
@@ -60,6 +64,6 @@ app.get("/getTec", (req, res) => {
     });
 }); */
 
-app.listen(3001, ()=>{
-    console.log("Rodando servidor!");
+app.listen(8081, function () {
+    console.log("Servidor iniciado na porta 8081: http://localhost:8081");
 });
