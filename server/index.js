@@ -64,6 +64,90 @@ app.get("/getTec", (req, res) => {
     });
 }); */
 
+app.post('/add-user', async (req, res) => {
+    var data = req.body;
+
+    data.senha = await bcrypt.hash(data.senha, 8);
+
+    await User.create(data)
+        .then(() => {
+            return res.json({
+                erro: false,
+                mensagem: "Valor cadastrado com sucesso!"
+            });
+        }).catch(function () {
+            return res.status(400).json({
+                erro: true,
+                mensagem: "Erro: Valor não cadastrado com sucesso!"
+            });
+        });
+
+});
+
+app.post('/login', async (req, res) => {
+    const user = await User.findOne({
+        attributes: ['id_usuario', 'nome', 'usuario', 'senha'],
+        where: {
+            usuario: req.body.usuario
+        }
+    });
+
+    if (user === null) {
+        return res.status(400).json({
+            erro: true,
+            mensagem: "Erro: Usuário ou senha incorreta!"
+
+        });
+    }
+
+
+   /*  try {
+        if (await bcrypt.compare(req.body.senha, user.senha)) {
+            res.send('Logado com sucesso!')
+        } else {
+            res.send('Nao deu certo! :(')
+        }
+    } catch {
+        res.status(500).send();
+    } */
+
+    if(!(await bcrypt.compare(req.body.senha, user.senha))){
+        return res.status(400).json({
+            erro: true,
+            mensagem: "Erro: Usuário ou senha incorreta!"            
+        });
+    }
+
+    var token = jwt.sign({ id: user.id_usuario }, process.env.SECRET, {
+        expiresIn: '1d'
+    });
+
+    return res.json({
+        erro: false,
+        mensagem: "Email Localizado! Seja bem vindo!",
+        token,
+        usuario: user.nome,
+        
+    })
+});
+
+app.get("/val-token", eAdminAuth, async (req, res)=> {
+    await User.findByPk(req.userId, {attributes: ['id_usuario', 'usuario']})
+    .then((user)=>{
+        return res.json({
+            erro: false,
+            user
+        });
+    }).catch(()=>{
+        return res.status(400).json({
+            erro: true,
+            mensagem: "Erro: Necessário efetuar login para acessar a página!"
+        });
+    });
+});
+
+
+
 app.listen(8081, function () {
     console.log("Servidor iniciado na porta 8081: http://localhost:8081");
 });
