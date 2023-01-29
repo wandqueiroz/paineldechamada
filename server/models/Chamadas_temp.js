@@ -1,22 +1,30 @@
 const Sequelize = require('sequelize');
 const db = require('../config/db');
 
-const AtividadePop = db.define('atividade_pop', {
-    id_atividade_pop: {
+const Chamadas_temp = db.define('chamadas_temp', {
+    id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         allowNull: false,
         primaryKey: true
     },
-    id_beneficiario: {
+    nome: {
         type: Sequelize.STRING,
         allowNull: true
     },
-    tipo: {
+    horario: {
         type: Sequelize.STRING,
         allowNull: true
     },
-    servico: {
+    equipamento: {
+        type: Sequelize.INTEGER,
+        allowNull: true
+    },
+    perfil_atendimento: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    prioridade: {
         type: Sequelize.STRING,
         allowNull: true
     }
@@ -29,4 +37,4 @@ const AtividadePop = db.define('atividade_pop', {
 //Verifica as alterações da tabela e realiza a mesma
 //Lancamento.sync({ alter: true });
 
-module.exports = AtividadePop;
+module.exports = Chamadas_temp;

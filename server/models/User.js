@@ -12,6 +12,10 @@ const User = db.define('users_painel', {
         type: Sequelize.STRING,
         allowNull: false
     },
+    equipamento: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    },
     usuario: {
         type: Sequelize.STRING,
         allowNull: false

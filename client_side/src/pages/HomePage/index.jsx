@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
+import { AuthContext } from '../../contexts/auth';
+import LogoutIcon from '@mui/icons-material/Logout';
 import { useSpeechSynthesis } from 'react-speech-kit';
 import '../../App.css';
 import Axios from 'axios';
@@ -21,99 +23,116 @@ import video10 from '../../assets/video/video10.mp4';
 import video11 from '../../assets/video/video11.mp4';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+import { api, getNow, getCad, getTec } from "../../services/api";
+
+
 const HomePage = () => {
-    const [listCad, setListCad] = useState([]);
-    const [listTec, setListTec] = useState([]);
-    const [now, setNow] = useState([]);
-    const { speak, voices } = useSpeechSynthesis();
-    const [nomeTempCad, setNomeTempCad] = useState();
-    const [nomeTempTec, setNomeTempTec] = useState();
-    var nomeNow = null;
-    const [cadNow, setCadNow] = useState();
-    const [tecNow, setTecNow] = useState();
-    const [play, { stop }] = useSound(ring);
-    const [isVisible, setIsVisible] = useState(false);
-    const [isMuted, setIsMuted] = useState(false);
-  
-    const videoIntro = "https://www.w3schools.com/tags/movie.mp4";
-    const videoLoop = "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4";
-  
-    
-  
-    const [vidIndex, setVidIndex] = useState(0);
-    const ref = useRef(null);
-  
-    const vidArray = [
-      video1, video2, video3, video4, video5, video6, video7, video8, video9, video10, video11
-    ];
-  
-    const vidLength = vidArray.length;
-  
-    const nomeVideo = vidArray[vidIndex];
-  
-    useEffect(() => {
-      if (vidIndex === 0 && ref.current) {
-        ref.current.play();
-      }
-     
-    }, [ref, vidIndex]);
-    //console.log(vidIndex);
-    const handleVisibility = () => {
-      // 👇️ toggle visibility
-      setIsVisible(true);
-      setTimeout(() => {
-        setIsVisible(false);
-      }, "10000");
-    };
-  
-    
-    const mutedHandler = () => {
-      setIsMuted(true);
-      setTimeout(() => {
-        setIsMuted(false);
-      }, "11000");
+  const [listCad, setListCad] = useState([]);
+  const [listTec, setListTec] = useState([]);
+  const [now, setNow] = useState([]);
+  const { speak, voices } = useSpeechSynthesis();
+  const [nomeTempCad, setNomeTempCad] = useState();
+  const [nomeTempTec, setNomeTempTec] = useState();
+  var nomeNow = null;
+  const [cadNow, setCadNow] = useState();
+  const [tecNow, setTecNow] = useState();
+  const [play, { stop }] = useSound(ring);
+  const [isVisible, setIsVisible] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+
+  const videoIntro = "https://www.w3schools.com/tags/movie.mp4";
+  const videoLoop = "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4";
+
+  const { logout } = useContext(AuthContext);
+
+  const handleLogout = () => {
+    logout();
+  }
+
+  const [vidIndex, setVidIndex] = useState(0);
+  const ref = useRef(null);
+
+  const vidArray = [
+    video1, video2, video3, video4, video5, video6, video7, video8, video9, video10, video11
+  ];
+
+  const vidLength = vidArray.length;
+
+  const nomeVideo = vidArray[vidIndex];
+
+  useEffect(() => {
+    if (vidIndex === 0 && ref.current) {
+      ref.current.play();
     }
-  
-    function chamaNome(nome) {
-      
-      
-     
-      play();
-      setTimeout(() => {
-        speak({
-          default: true,
-          text: nome,
-          lang: "pt-BR",
-          voice: voices[0],
-          repeat: false
-        })
-      }, "4000");
-      setTimeout(() => {
-        speak({
-          default: true,
-          text: nome,
-          lang: "pt-BR",
-          voice: voices[0],
-          repeat: false
-        })
-      }, "4000");
-      
+
+  }, [ref, vidIndex]);
+  //console.log(vidIndex);
+  const handleVisibility = () => {
+    // 👇️ toggle visibility
+    setIsVisible(true);
+    setTimeout(() => {
+      setIsVisible(false);
+    }, "10000");
+  };
+
+
+  const mutedHandler = () => {
+    setIsMuted(true);
+    setTimeout(() => {
+      setIsMuted(false);
+    }, "11000");
+  }
+
+  function chamaNome(nome) {
+
+
+
+    play();
+    setTimeout(() => {
+      speak({
+        default: true,
+        text: nome,
+        lang: "pt-BR",
+        voice: voices[0],
+        repeat: false
+      })
+    }, "4000");
+    setTimeout(() => {
+      speak({
+        default: true,
+        text: nome,
+        lang: "pt-BR",
+        voice: voices[0],
+        repeat: false
+      })
+    }, "4000");
+
+  }
+
+  function click(id) {
+    let element = document.getElementById(id);
+    if (element.click)
+      element.click();
+    else if (document.createEvent) {
+      let eventObj = document.createEvent('MouseEvents');
+      eventObj.initEvent('click', true, true);
+      element.dispatchEvent(eventObj);
     }
-  
-    function click(id) {
-      let element = document.getElementById(id);
-      if (element.click)
-        element.click();
-      else if (document.createEvent) {
-        let eventObj = document.createEvent('MouseEvents');
-        eventObj.initEvent('click', true, true);
-        element.dispatchEvent(eventObj);
-      }
+  }
+
+  const headers = {
+    'headers': {
+      'Content-Type': 'application/json'
     }
-  
-  
-    async function getNow() {
-      await Axios.get("http://localhost:3001/getNow").then((response) => {
+  }
+
+
+  const token = localStorage.getItem("token");
+  const equipamento = localStorage.getItem("uni");
+
+  async function getData(){
+
+    /*   await Axios.get("http://localhost:3001/getNow").then((response) => {
         if (response.data.length >= 1) {
           setNow(response.data.slice(0, 1)['0']);
           nomeNow = response.data.slice(0, 1)['0']['nome'];
@@ -124,7 +143,7 @@ const HomePage = () => {
         if (response.data.length >= 1) {
           setListCad(response.data.slice(0, 1)['0']);
           setNomeTempCad(response.data.slice(0, 1)['0']['nome']);
-          
+  
         }
       });
   
@@ -135,70 +154,97 @@ const HomePage = () => {
         }
   
   
-      });
-  
-  
-      verificaUltimo();
-      //console.log(nomeTempCad + ' CAD');
-  
-      //console.log(tecNow == now.nome);
-  
-      //console.log(nomeTempTec + ' CADEEE');
-    }
-  
-    //console.log(now.nome + ' TEC#######');
-  
-    const verificaUltimo = () => {
-      if (tecNow !== now.nome && cadNow !== now.nome) {
-  
-        //console.log(nomeTempCad + ' CAD111');
-  
-        //console.log(nomeTempTec + ' TEC111');
-  
-        setCadNow(nomeTempCad);
-        setTecNow(nomeTempTec);
-        handleVisibility();
-  
-  
-        //console.log("Nome diferente!");
-        //console.log(cadNow !== nomeNow);
-  
-  
-        //chamaNome();
-  
-      }
-  
-    }
-  
-    const verificaVidNum = () => {
-      setVidIndex((idx) => idx + 1)
-      if(vidIndex == vidArray.length -1){
-        setVidIndex((idx) => idx = 0);
-      }
-    }
-  
-  
-    useEffect(() => {
-      getNow();
-      
-    });
-  
-    useEffect(() => {
-      mutedHandler();
-      chamaNome(nomeTempCad);
-      
-    }, [nomeTempCad]);
-  
-    useEffect(() => {
-      mutedHandler();
-      chamaNome(nomeTempTec);
-     
-    }, [nomeTempTec]);
+      }); 
+   */
+    api.defaults.headers.Authorization = `Bearer ${token}`; 
+
+     const responseNow = await getNow(equipamento);
+     if (responseNow.data.chamadas_temp.length >= 1) {
+       setNow(responseNow.data.chamadas_temp.slice(0, 1)['0']);
+       nomeNow = responseNow.data.chamadas_temp.slice(0, 1)['0']['nome'];
+     }
+ 
+     const responseCad = await getCad(equipamento);
+     if (responseCad.data.chamadas_temp.length >= 1) {
+       setListCad(responseCad.data.chamadas_temp.slice(0, 1)['0']);
+       setNomeTempCad(responseCad.data.chamadas_temp.slice(0, 1)['0']['nome']);
+     }
     
+ 
+    const responseTec = await getTec(equipamento);    
+    if (responseTec.data.chamadas_temp.length >= 1) {
+      setListTec(responseTec.data.chamadas_temp.slice(0, 1)['0']);
+      setNomeTempTec(responseTec.data.chamadas_temp['0']['nome']);
+    }
+    //setNomeTempTec = JSON.parse(responseTec.data.chamadas_temp['0']['nome']);
+    
+    //console.log(responseTec.data.chamadas_temp['0']['nome']);
+    //console.log(responseTec.data.chamadas_temp.length >= 1);
+    verificaUltimo();
+
+
+    //console.log(nomeTempCad + ' CAD');
+
+    //console.log(tecNow == now.nome);
+
+    //console.log(nomeTempTec + ' CADEEE');
+  }
+
+  //console.log(now.nome + ' TEC#######');
+
+  const verificaUltimo = () => {
+    if (tecNow !== now.nome && cadNow !== now.nome) {
+
+      //console.log(nomeTempCad + ' CAD111');
+
+      //console.log(nomeTempTec + ' TEC111');
+
+      setCadNow(nomeTempCad);
+      setTecNow(nomeTempTec);
+      handleVisibility();
+
+
+      //console.log("Nome diferente!");
+      //console.log(cadNow !== nomeNow);
+
+
+      //chamaNome();
+
+    }
+
+  }
+
+  const verificaVidNum = () => {
+    setVidIndex((idx) => idx + 1)
+    if (vidIndex == vidArray.length - 1) {
+      setVidIndex((idx) => idx = 0);
+    }
+  }
+
+
+   useEffect(() => {
+    getData();
+
+  });
+ 
+ 
+
+  useEffect(() => {
+    mutedHandler();
+    chamaNome(nomeTempCad);
+
+  }, [nomeTempCad]);
+
+  useEffect(() => {
+    mutedHandler();
+    chamaNome(nomeTempTec);
+
+  }, [nomeTempTec]);
 
 
 
-    return (<div className='app--container'>
+
+  return (<div className='app--container'>
     <div className="chamada" style={{ visibility: isVisible ? 'visible' : 'hidden' }}>
       <div className="chamada--container container" >
         <div className='chamada--nome mt-1'>
@@ -235,11 +281,16 @@ const HomePage = () => {
           //muted={isMuted}
           muted
           ref={ref}
-          onEnded={() => verificaVidNum() }
+          onEnded={() => verificaVidNum()}
         />
         {/*console.log(vidIndex)*/}
       </Col>
+
       <Col md={6}>
+        <button className='btn btn-danger m-1 float-end' title="Fazer Logout" onClick={handleLogout}>
+          <LogoutIcon />
+        </button>
+
         <div className="logo--container container" >
 
           <img src={logo} alt="Logo" width="450" height="550" />
@@ -256,17 +307,17 @@ const HomePage = () => {
       Ding Dong
     </Button>
     <Button id='nome' onClick={() => speak({
-        default: true,
-        text: now,
-        lang: "pt-BR",
-        voice: voices[16],
-        repeat: false
-      })} hidden>
+      default: true,
+      text: now,
+      lang: "pt-BR",
+      voice: voices[16],
+      repeat: false
+    })} hidden>
       Chama Nome
     </Button>
-    
 
-    
+
+
 
     <div className='ultimos--container'>
       {listCad && <Card className="card--container bg-secondary">
