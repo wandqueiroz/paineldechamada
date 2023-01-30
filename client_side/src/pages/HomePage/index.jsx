@@ -3,7 +3,6 @@ import { AuthContext } from '../../contexts/auth';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useSpeechSynthesis } from 'react-speech-kit';
 import '../../App.css';
-import Axios from 'axios';
 import CardCad from '../../components/cards/cardCad';
 import Card from 'react-bootstrap/Card';
 import { Button, Col, Container, Row } from 'react-bootstrap';
@@ -159,12 +158,18 @@ const HomePage = () => {
     api.defaults.headers.Authorization = `Bearer ${token}`; 
 
      const responseNow = await getNow(equipamento);
-     if (responseNow.data.chamadas_temp.length >= 1) {
+     /* if (responseNow.data.chamadas_temp.length >= 1) {
        setNow(responseNow.data.chamadas_temp.slice(0, 1)['0']);
        nomeNow = responseNow.data.chamadas_temp.slice(0, 1)['0']['nome'];
-     }
- 
-     const responseCad = await getCad(equipamento);
+     } */
+     setNow(responseNow.data.tabNow['0']);
+     nomeNow = now.nome;
+     setListCad(responseNow.data.tabCad['0']);
+     setNomeTempCad(responseNow.data.tabCad['0']['nome']);
+     setListTec(responseNow.data.tabTec['0']);
+      setNomeTempTec(responseNow.data.tabTec['0']['nome']);
+     //console.log(responseNow.data.tabNow['0']['nome']);
+    /*  const responseCad = await getCad(equipamento);
      if (responseCad.data.chamadas_temp.length >= 1) {
        setListCad(responseCad.data.chamadas_temp.slice(0, 1)['0']);
        setNomeTempCad(responseCad.data.chamadas_temp.slice(0, 1)['0']['nome']);
@@ -175,7 +180,7 @@ const HomePage = () => {
     if (responseTec.data.chamadas_temp.length >= 1) {
       setListTec(responseTec.data.chamadas_temp.slice(0, 1)['0']);
       setNomeTempTec(responseTec.data.chamadas_temp['0']['nome']);
-    }
+    } */
     //setNomeTempTec = JSON.parse(responseTec.data.chamadas_temp['0']['nome']);
     
     //console.log(responseTec.data.chamadas_temp['0']['nome']);
@@ -278,8 +283,8 @@ const HomePage = () => {
           className="video"
           src={nomeVideo}
           autoPlay
-          //muted={isMuted}
-          muted
+          muted={isMuted}
+          //muted
           ref={ref}
           onEnded={() => verificaVidNum()}
         />

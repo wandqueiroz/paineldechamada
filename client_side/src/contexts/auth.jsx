@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
     const login = async (email, password) => {
         const response = await createSession(email, password);
 
-        console.log("login auth", response.data);
+        //console.log("login auth", response.mensagem);
 
         const loggedUser = response.data.user;
         const token = response.data.token;
@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }) => {
 
         setUser(loggedUser);
         navigate("/");
-
+        //return  response.mensagem;
     };
 
     const logout = () => {

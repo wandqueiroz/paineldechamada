@@ -64,7 +64,77 @@ app.get("/getTec", (req, res) => {
     });
 }); */
 
+app.get('/getAll/:paramPesquisa', async (req, res) => {
+    var paramPesquisa = new String(req.params.paramPesquisa);
+    Promise.all([
+      tabNow = Chamadas_temp.findAll({
+        order: [['id', 'DESC']],
+        limit: 1,
+        where: {
+            'equipamento': paramPesquisa
+        }
+        
+    }),
+      tabCad = Chamadas_temp.findAll({
+        order: [['id', 'DESC']],
+        limit: 1,
+        where: {
+            'equipamento': paramPesquisa,
+            'perfil_atendimento': 'CADASTRO UNICO'
+        }
+        
+    }),
+      tabTec = Chamadas_temp.findAll({
+        order: [['id', 'DESC']],
+        limit: 1,
+        where: {
+            'equipamento': paramPesquisa,
+            'perfil_atendimento': 'ATENDIMENTO TECNICO'
+        }
+        
+    }),
+    ]).then(function([tabNow, tabCad, tabTec]) {
+      res.send({
+        tabNow: tabNow,
+        tabCad: tabCad,
+        tabTec: tabTec
+      });
+    });
+  });
+  
+
+
+app.get('/getAllibaba/:paramPesquisa', async (req, res) => {
+    var paramPesquisa = new String(req.params.paramPesquisa);
+    await Chamadas_temp.findAll({
+        group: [['nome']],
+        order: [['id', 'DESC']],
+        limit: 4,
+        where: {
+            'equipamento': paramPesquisa
+        }
+        
+    }).then(function (chamadas_temp) {
+        return res.json({
+            erro: false,
+            chamadas_temp,
+            
+        });
+    }).catch(function () {
+        return res.json({
+            erro: true,
+            mensagem: "Erro! Nenhum valor encontrado no banco de dados",
+            equipamento: paramPesquisa
+
+        })
+
+    });
+});
+
+
+
 app.get('/getNow/:paramPesquisa', async (req, res) => {
+
     var paramPesquisa = new String(req.params.paramPesquisa);
     await Chamadas_temp.findAll({
         order: [['id', 'DESC']],

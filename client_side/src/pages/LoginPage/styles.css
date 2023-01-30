@@ -1,4 +1,6 @@
 #login {
+    background: rgb(83, 83, 83);
+    background: radial-gradient(circle, rgba(83, 83, 83, 1) 0%, rgba(33, 33, 33, 1) 96%);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -8,26 +10,27 @@
 }
 
 #login .form {
-    background-color: #f1f1f1;
+    background-color: #0000006c;
     width: 100%;
     max-width: 480px;
     padding: 0.5rem;
 }
 
-#login .field{
+#login .field {
     padding-bottom: 0.5rem;
 }
 
-#login .field label{
+#login .field label {
     display: block;
 }
 
 #login .field input {
     width: 100%;
+    background-color: rgba(231, 230, 230, 0.801);
+    font-weight: 700;
 }
 
 #login .actions {
     text-align: center;
     margin-top: 0.5rem;
 }
-
