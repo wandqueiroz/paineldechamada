@@ -35,7 +35,7 @@
   text-align: center;
 }
 .chamada--nome, .chamada--info{
-  text-align: center;
+  font-size: 1.5rem;
   overflow: hidden;
  
 }

@@ -15,12 +15,17 @@
 }
 
 .div--card--nome h3{
-    font-size: 3rem;
     font-weight: bold;
 }
 
 .card--nome{
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; overflow: hidden;
+    font-size: 6ch;
+}
+
+.card--prioridade{
+  font-size: 5ch;
+  color: #F7C40A;
 }
 
 .div--card--tipo h3{

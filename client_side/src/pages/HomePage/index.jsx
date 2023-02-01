@@ -357,7 +357,7 @@ const HomePage = () => {
             </div>
 
             <div className="div--card--tipo ">
-              <h3 className="card--prioridade">{listTec.horario} - {listTec.prioridade}</h3>
+              <h3 className="card--prioridade tec">{listTec.horario} - {listTec.prioridade}</h3>
 
             </div>
           </div>

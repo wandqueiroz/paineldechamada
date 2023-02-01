@@ -4,7 +4,7 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const {eAdminAuth} = require('./middlewares/auth');
+const { eAdminAuth } = require('./middlewares/auth');
 require('dotenv').config();
 
 const { Op, where } = require('sequelize');
@@ -67,41 +67,42 @@ app.get("/getTec", (req, res) => {
 app.get('/getAll/:paramPesquisa', async (req, res) => {
     var paramPesquisa = new String(req.params.paramPesquisa);
     Promise.all([
-      tabNow = Chamadas_temp.findAll({
-        order: [['id', 'DESC']],
-        limit: 1,
-        where: {
-            'equipamento': paramPesquisa
-        }
-        
-    }),
-      tabCad = Chamadas_temp.findAll({
-        order: [['id', 'DESC']],
-        limit: 1,
-        where: {
-            'equipamento': paramPesquisa,
-            'perfil_atendimento': 'CADASTRO UNICO'
-        }
-        
-    }),
-      tabTec = Chamadas_temp.findAll({
-        order: [['id', 'DESC']],
-        limit: 1,
-        where: {
-            'equipamento': paramPesquisa,
-            'perfil_atendimento': 'ATENDIMENTO TECNICO'
-        }
-        
-    }),
-    ]).then(function([tabNow, tabCad, tabTec]) {
-      res.send({
-        tabNow: tabNow,
-        tabCad: tabCad,
-        tabTec: tabTec
-      });
+        tabNow = Chamadas_temp.findAll({
+            order: [['id', 'DESC']],
+            limit: 1,
+            where: {
+                'equipamento': [paramPesquisa, '0'],
+            }
+
+        }),
+        tabCad = Chamadas_temp.findAll({
+            order: [['id', 'DESC']],
+            limit: 1,
+            where: {
+                'equipamento': [paramPesquisa, '0'],
+                'perfil_atendimento': 'CADASTRO UNICO',
+
+            }
+
+        }),
+        tabTec = Chamadas_temp.findAll({
+            order: [['id', 'DESC']],
+            limit: 1,
+            where: {
+                'equipamento': [paramPesquisa, '0'],
+                'perfil_atendimento': 'ATENDIMENTO TECNICO'
+            }
+
+        }),
+    ]).then(function ([tabNow, tabCad, tabTec]) {
+        res.send({
+            tabNow: tabNow,
+            tabCad: tabCad,
+            tabTec: tabTec
+        });
     });
-  });
-  
+});
+
 
 
 app.get('/getAllibaba/:paramPesquisa', async (req, res) => {
@@ -113,12 +114,12 @@ app.get('/getAllibaba/:paramPesquisa', async (req, res) => {
         where: {
             'equipamento': paramPesquisa
         }
-        
+
     }).then(function (chamadas_temp) {
         return res.json({
             erro: false,
             chamadas_temp,
-            
+
         });
     }).catch(function () {
         return res.json({
@@ -133,7 +134,7 @@ app.get('/getAllibaba/:paramPesquisa', async (req, res) => {
 
 
 
-app.get('/getNow/:paramPesquisa', async (req, res) => {
+app.get('/get/:paramPesquisa', async (req, res) => {
 
     var paramPesquisa = new String(req.params.paramPesquisa);
     await Chamadas_temp.findAll({
@@ -142,12 +143,12 @@ app.get('/getNow/:paramPesquisa', async (req, res) => {
         where: {
             'equipamento': paramPesquisa
         }
-        
+
     }).then(function (chamadas_temp) {
         return res.json({
             erro: false,
             chamadas_temp,
-            
+
         });
     }).catch(function () {
         return res.json({
@@ -169,12 +170,12 @@ app.get('/getCad/:paramPesquisa', async (req, res) => {
             'equipamento': paramPesquisa,
             'perfil_atendimento': 'CADASTRO UNICO'
         }
-        
+
     }).then(function (chamadas_temp) {
         return res.json({
             erro: false,
             chamadas_temp,
-            
+
         });
     }).catch(function () {
         return res.json({
@@ -194,12 +195,12 @@ app.get('/getTec/:paramPesquisa', async (req, res) => {
             'equipamento': paramPesquisa,
             'perfil_atendimento': 'ATENDIMENTO TECNICO'
         }
-        
+
     }).then(function (chamadas_temp) {
         return res.json({
             erro: false,
             chamadas_temp,
-            
+
         });
     }).catch(function () {
         return res.json({
@@ -248,20 +249,20 @@ app.post('/login', async (req, res) => {
     }
 
 
-   /*  try {
-        if (await bcrypt.compare(req.body.senha, user.senha)) {
-            res.send('Logado com sucesso!')
-        } else {
-            res.send('Nao deu certo! :(')
-        }
-    } catch {
-        res.status(500).send();
-    } */
+    /*  try {
+         if (await bcrypt.compare(req.body.senha, user.senha)) {
+             res.send('Logado com sucesso!')
+         } else {
+             res.send('Nao deu certo! :(')
+         }
+     } catch {
+         res.status(500).send();
+     } */
 
-    if(!(await bcrypt.compare(req.body.senha, user.senha))){
+    if (!(await bcrypt.compare(req.body.senha, user.senha))) {
         return res.status(400).json({
             erro: true,
-            mensagem: "Erro: Usuário ou senha incorreta!"            
+            mensagem: "Erro: Usuário ou senha incorreta!"
         });
     }
 
@@ -275,23 +276,23 @@ app.post('/login', async (req, res) => {
         token: token,
         user: user.usuario,
         equipamento: user.equipamento
-        
+
     })
 });
 
-app.get("/val-token", eAdminAuth, async (req, res)=> {
-    await User.findByPk(req.userId, {attributes: ['id_usuario', 'usuario']})
-    .then((user)=>{
-        return res.json({
-            erro: false,
-            user
+app.get("/val-token", eAdminAuth, async (req, res) => {
+    await User.findByPk(req.userId, { attributes: ['id_usuario', 'usuario'] })
+        .then((user) => {
+            return res.json({
+                erro: false,
+                user
+            });
+        }).catch(() => {
+            return res.status(400).json({
+                erro: true,
+                mensagem: "Erro: Necessário efetuar login para acessar a página!"
+            });
         });
-    }).catch(()=>{
-        return res.status(400).json({
-            erro: true,
-            mensagem: "Erro: Necessário efetuar login para acessar a página!"
-        });
-    });
 });
 
 
