@@ -104,7 +104,7 @@ app.get('/getAll/:paramPesquisa', async (req, res) => {
 });
 
 
-
+/* 
 app.get('/getAllibaba/:paramPesquisa', async (req, res) => {
     var paramPesquisa = new String(req.params.paramPesquisa);
     await Chamadas_temp.findAll({
@@ -132,7 +132,7 @@ app.get('/getAllibaba/:paramPesquisa', async (req, res) => {
     });
 });
 
-
+ */
 
 app.get('/get/:paramPesquisa', async (req, res) => {
 

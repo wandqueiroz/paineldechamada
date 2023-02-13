@@ -32,9 +32,13 @@ const HomePage = () => {
   const { speak, voices } = useSpeechSynthesis();
   const [nomeTempCad, setNomeTempCad] = useState();
   const [nomeTempTec, setNomeTempTec] = useState();
+  const [idTempCad, setIdTempCad] = useState();
+  const [idTempTec, setIdTempTec] = useState();
   var nomeNow = null;
   const [cadNow, setCadNow] = useState();
   const [tecNow, setTecNow] = useState();
+  const [idCadNow, setIdCadNow] = useState();
+  const [idTecNow, setIdTecNow] = useState();
   const [play, { stop }] = useSound(ring);
   const [isVisible, setIsVisible] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
@@ -129,7 +133,7 @@ const HomePage = () => {
   const token = localStorage.getItem("token");
   const equipamento = localStorage.getItem("uni");
 
-  async function getData(){
+  async function getData() {
 
     /*   await Axios.get("http://localhost:3001/getNow").then((response) => {
         if (response.data.length >= 1) {
@@ -155,20 +159,22 @@ const HomePage = () => {
   
       }); 
    */
-    api.defaults.headers.Authorization = `Bearer ${token}`; 
+    api.defaults.headers.Authorization = `Bearer ${token}`;
 
-     const responseNow = await getNow(equipamento);
-     /* if (responseNow.data.chamadas_temp.length >= 1) {
-       setNow(responseNow.data.chamadas_temp.slice(0, 1)['0']);
-       nomeNow = responseNow.data.chamadas_temp.slice(0, 1)['0']['nome'];
-     } */
-     setNow(responseNow.data.tabNow['0']);
-     nomeNow = now.nome;
-     setListCad(responseNow.data.tabCad['0']);
-     setNomeTempCad(responseNow.data.tabCad['0']['nome']);
-     setListTec(responseNow.data.tabTec['0']);
-      setNomeTempTec(responseNow.data.tabTec['0']['nome']);
-     //console.log(responseNow.data.tabNow['0']['nome']);
+    const responseNow = await getNow(equipamento);
+    /* if (responseNow.data.chamadas_temp.length >= 1) {
+      setNow(responseNow.data.chamadas_temp.slice(0, 1)['0']);
+      nomeNow = responseNow.data.chamadas_temp.slice(0, 1)['0']['nome'];
+    } */
+    setNow(responseNow.data.tabNow['0']);
+    nomeNow = now.nome;
+    setListCad(responseNow.data.tabCad['0']);
+    setNomeTempCad(responseNow.data.tabCad['0']['nome']);
+    setIdTempCad(responseNow.data.tabCad['0']['id']);
+    setListTec(responseNow.data.tabTec['0']);
+    setNomeTempTec(responseNow.data.tabTec['0']['nome']);
+    setIdTempTec(responseNow.data.tabTec['0']['id']);
+    //console.log(responseNow.data.tabNow['0']['nome']);
     /*  const responseCad = await getCad(equipamento);
      if (responseCad.data.chamadas_temp.length >= 1) {
        setListCad(responseCad.data.chamadas_temp.slice(0, 1)['0']);
@@ -182,12 +188,12 @@ const HomePage = () => {
       setNomeTempTec(responseTec.data.chamadas_temp['0']['nome']);
     } */
     //setNomeTempTec = JSON.parse(responseTec.data.chamadas_temp['0']['nome']);
-    
+
     //console.log(responseTec.data.chamadas_temp['0']['nome']);
     //console.log(responseTec.data.chamadas_temp.length >= 1);
     verificaUltimo();
 
-
+    console.log(tecNow + ' idNOwTemp');
     //console.log(nomeTempCad + ' CAD');
 
     //console.log(tecNow == now.nome);
@@ -198,14 +204,16 @@ const HomePage = () => {
   //console.log(now.nome + ' TEC#######');
 
   const verificaUltimo = () => {
-    if (tecNow !== now.nome && cadNow !== now.nome) {
+    if (tecNow !== now.nome && cadNow !== now.nome || (idCadNow !== now.id && idTecNow !== now.id)) {
 
-      //console.log(nomeTempCad + ' CAD111');
+
 
       //console.log(nomeTempTec + ' TEC111');
 
       setCadNow(nomeTempCad);
       setTecNow(nomeTempTec);
+      setIdCadNow(idTempCad);
+      setIdTecNow(idTempTec);
       handleVisibility();
 
 
@@ -227,24 +235,24 @@ const HomePage = () => {
   }
 
 
-   useEffect(() => {
+  useEffect(() => {
     getData();
 
   });
- 
- 
+
+
 
   useEffect(() => {
     mutedHandler();
     chamaNome(nomeTempCad);
 
-  }, [nomeTempCad]);
+  }, [idTempCad]);
 
   useEffect(() => {
     mutedHandler();
     chamaNome(nomeTempTec);
 
-  }, [nomeTempTec]);
+  }, [idTempTec]);
 
 
 
@@ -283,8 +291,8 @@ const HomePage = () => {
           className="video"
           src={nomeVideo}
           autoPlay
-          muted={isMuted}
-          //muted
+          //muted={isMuted}
+          muted
           ref={ref}
           onEnded={() => verificaVidNum()}
         />
